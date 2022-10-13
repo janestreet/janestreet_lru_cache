@@ -1,0 +1,2 @@
+(library (name lru_cache) (public_name lru_cache) (libraries core)
+ (preprocess (pps ppx_jane -dont-apply=sexp_message)))

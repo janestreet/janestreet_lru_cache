@@ -18,7 +18,9 @@ module type S = sig
       pass through to the caller of the operation that triggered the removal. *)
   val create : ?destruct:((key * 'a) Queue.t -> unit) -> max_size:int -> unit -> 'a t
 
+  (** Ordered from least- to most-recently used elements. *)
   val to_alist : 'a t -> (key * 'a) list
+
   val length : _ t -> int
   val is_empty : _ t -> bool
   val stats : ?sexp_of_key:(key -> Sexp.t) -> _ t -> Sexp.t

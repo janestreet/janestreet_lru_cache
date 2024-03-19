@@ -57,7 +57,8 @@ module _ : S with type key := int = struct
           (max_size 2)
           (length   2)
           (hit_rate 0)
-          (keys (3 1))))) |}]
+          (keys (3 1)))))
+      |}]
   ;;
 
   let to_alist = M.to_alist
@@ -71,11 +72,13 @@ module _ : S with type key := int = struct
     test [ 1; 2; 3 ];
     [%expect {|
       ((2 ())
-       (3 ())) |}];
+       (3 ()))
+      |}];
     test [ 1; 2; 1 ];
     [%expect {|
       ((2 ())
-       (1 ())) |}]
+       (1 ()))
+      |}]
   ;;
 
   let clear = M.clear
@@ -90,7 +93,8 @@ module _ : S with type key := int = struct
     show ();
     [%expect {|
       ((length   0)
-       (is_empty true)) |}];
+       (is_empty true))
+      |}];
     foreach 3 (fun key ->
       set t ~key ~data:();
       show ());
@@ -101,14 +105,16 @@ module _ : S with type key := int = struct
       ((length   2)
        (is_empty false))
       ((length   2)
-       (is_empty false)) |}];
+       (is_empty false))
+      |}];
     let (`Dropped dropped) = clear t in
     print_s [%message (dropped : int)];
     show ();
     [%expect {|
       (dropped 2)
       ((length   0)
-       (is_empty true)) |}]
+       (is_empty true))
+      |}]
   ;;
 
   let find = M.find
@@ -129,7 +135,8 @@ module _ : S with type key := int = struct
     show 1;
     [%expect {|
       (remove Ok)
-      ((find ()) (mem false)) |}];
+      ((find ()) (mem false))
+      |}];
     print_s [%message "" ~remove:(remove t 1 : [ `Ok | `No_such_key ])];
     [%expect {| (remove No_such_key) |}];
     print_s [%message (stats t : Sexp.t)];
@@ -139,7 +146,8 @@ module _ : S with type key := int = struct
         (max_size 2)
         (length   0)
         (hit_rate 0.33333333333333331)
-        (keys ()))) |}]
+        (keys ())))
+      |}]
   ;;
 
   let find_or_add = M.find_or_add
@@ -157,7 +165,8 @@ module _ : S with type key := int = struct
       ((max_size 2)
        (length   1)
        (hit_rate 0)
-       (keys (1))) |}];
+       (keys (1)))
+      |}];
     test 2;
     [%expect
       {|
@@ -165,21 +174,24 @@ module _ : S with type key := int = struct
       ((max_size 2)
        (length   2)
        (hit_rate 0)
-       (keys (1 2))) |}];
+       (keys (1 2)))
+      |}];
     test 1;
     [%expect
       {|
       ((max_size 2)
        (length   2)
        (hit_rate 0.33333333333333331)
-       (keys (2 1))) |}];
+       (keys (2 1)))
+      |}];
     test 2;
     [%expect
       {|
       ((max_size 2)
        (length   2)
        (hit_rate 0.5)
-       (keys (1 2))) |}]
+       (keys (1 2)))
+      |}]
   ;;
 
   let find_and_remove = M.find_and_remove
@@ -193,7 +205,8 @@ module _ : S with type key := int = struct
     show ();
     [%expect {|
       ((1 1)
-       (2 2)) |}];
+       (2 2))
+      |}];
     find_and_remove 1;
     [%expect {| (1) |}];
     show ();
@@ -204,14 +217,16 @@ module _ : S with type key := int = struct
     show ();
     [%expect {|
       ((2 2)
-       (1 1)) |}];
+       (1 1))
+      |}];
     find_and_remove 2;
     find_and_remove 1;
     find_and_remove 1;
     [%expect {|
       (2)
       (1)
-      () |}];
+      ()
+      |}];
     print_s [%sexp (hit_rate t : float)];
     [%expect {| 0.6 |}]
   ;;
@@ -229,7 +244,8 @@ module _ : S with type key := int = struct
       ((max_size 2)
        (length   2)
        (hit_rate 0)
-       (keys (1 2))) |}];
+       (keys (1 2)))
+      |}];
     let test n =
       let (`Dropped dropped) = set_max_size t ~max_size:n in
       assert (max_size t = n);
@@ -242,7 +258,8 @@ module _ : S with type key := int = struct
        ((max_size 1)
         (length   1)
         (hit_rate 0)
-        (keys (2)))) |}];
+        (keys (2))))
+      |}];
     test 0;
     [%expect
       {|
@@ -250,14 +267,16 @@ module _ : S with type key := int = struct
        ((max_size 0)
         (length   0)
         (hit_rate 0)
-        (keys ()))) |}];
+        (keys ())))
+      |}];
     show_raise (fun () -> set_max_size t ~max_size:(-1));
     [%expect
       {|
       (raised (
         "invalid Lru.max_size argument" (
           (requested_max_size     -1)
-          (smallest_value_allowed 0)))) |}]
+          (smallest_value_allowed 0))))
+      |}]
   ;;
 
   let destruct queue = print_s [%message "destructing" ~_:(queue : (int * int) Queue.t)]
@@ -271,29 +290,34 @@ module _ : S with type key := int = struct
       (destructing ((1 0)))
       (destructing ((2 2)))
       (destructing ((3 3)))
-      (destructing ((4 4))) |}];
+      (destructing ((4 4)))
+      |}];
     print_s (stats t);
     [%expect
       {|
       ((max_size 3)
        (length   3)
        (hit_rate 0)
-       (keys (6 5 7))) |}];
+       (keys (6 5 7)))
+      |}];
     print_s [%sexp (remove t 7 : [ `Ok | `No_such_key ])];
     [%expect {|
       (destructing ((7 7)))
-      Ok |}];
+      Ok
+      |}];
     print_s (stats t);
     [%expect
       {|
       ((max_size 3)
        (length   2)
        (hit_rate 0)
-       (keys (6 5))) |}];
+       (keys (6 5)))
+      |}];
     print_s [%sexp (find_and_remove t 6 : int option)];
     [%expect {|
       (destructing ((6 5)))
-      (5) |}]
+      (5)
+      |}]
   ;;
 
   let%expect_test "[set_max_size], [clear] with [destruct]" =
@@ -314,7 +338,8 @@ module _ : S with type key := int = struct
        ((max_size 5)
         (length   4)
         (hit_rate 0)
-        (keys (1 2 3 4)))) |}];
+        (keys (1 2 3 4))))
+      |}];
     test_set_max_size 2;
     [%expect
       {|
@@ -325,7 +350,8 @@ module _ : S with type key := int = struct
        ((max_size 2)
         (length   2)
         (hit_rate 0)
-        (keys (3 4)))) |}];
+        (keys (3 4))))
+      |}];
     test_clear ();
     [%expect
       {|
@@ -336,7 +362,8 @@ module _ : S with type key := int = struct
        ((max_size 2)
         (length   0)
         (hit_rate 0)
-        (keys ()))) |}]
+        (keys ())))
+      |}]
   ;;
 
   let destruct queue = raise_s [%message "destructing" ~_:(queue : (int * int) Queue.t)]
@@ -360,14 +387,16 @@ module _ : S with type key := int = struct
       adding 7 -> 103
       (raised (destructing ((3 2))))
       adding 8 -> 104
-      (raised (destructing ((4 100)))) |}];
+      (raised (destructing ((4 100))))
+      |}];
     print_s [%message "" ~_:(stats t : Sexp.t)];
     [%expect
       {|
       ((max_size 4)
        (length   4)
        (hit_rate 0)
-       (keys (5 6 7 8))) |}];
+       (keys (5 6 7 8)))
+      |}];
     List.iter [ 9; 8 ] ~f:(fun key ->
       show_raise (fun () ->
         let result = remove t key in
@@ -378,14 +407,16 @@ module _ : S with type key := int = struct
         (key    9)
         (result No_such_key))
       "did not raise"
-      (raised (destructing ((8 104)))) |}];
+      (raised (destructing ((8 104))))
+      |}];
     print_s [%message "" ~_:(stats t : Sexp.t)];
     [%expect
       {|
       ((max_size 4)
        (length   3)
        (hit_rate 0)
-       (keys (5 6 7))) |}];
+       (keys (5 6 7)))
+      |}];
     set t ~key:8 ~data:1000;
     show_raise (fun () -> set_max_size t ~max_size:2);
     [%expect
@@ -393,28 +424,32 @@ module _ : S with type key := int = struct
       (raised (
         destructing (
           (5 101)
-          (6 102)))) |}];
+          (6 102))))
+      |}];
     print_s [%message "" ~_:(stats t : Sexp.t)];
     [%expect
       {|
       ((max_size 2)
        (length   2)
        (hit_rate 0)
-       (keys (7 8))) |}];
+       (keys (7 8)))
+      |}];
     show_raise (fun () -> clear t);
     [%expect
       {|
       (raised (
         destructing (
           (7 103)
-          (8 1000)))) |}];
+          (8 1000))))
+      |}];
     print_s [%message "" ~_:(stats t : Sexp.t)];
     [%expect
       {|
       ((max_size 2)
        (length   0)
        (hit_rate 0)
-       (keys ())) |}]
+       (keys ()))
+      |}]
   ;;
 
   let%expect_test "[find_or_add] with a raising [destruct]" =
@@ -433,7 +468,8 @@ module _ : S with type key := int = struct
       ((max_size 1)
        (length   1)
        (hit_rate 0)
-       (keys (1))) |}];
+       (keys (1)))
+      |}];
     test_find_or_add ~key:2 ~data:11;
     [%expect
       {|
@@ -441,7 +477,8 @@ module _ : S with type key := int = struct
       ((max_size 1)
        (length   1)
        (hit_rate 0)
-       (keys (2))) |}];
+       (keys (2)))
+      |}];
     test_find_or_add ~key:2 ~data:12;
     [%expect
       {|
@@ -450,6 +487,7 @@ module _ : S with type key := int = struct
       ((max_size 1)
        (length   1)
        (hit_rate 0.33333333333333331)
-       (keys (2))) |}]
+       (keys (2)))
+      |}]
   ;;
 end

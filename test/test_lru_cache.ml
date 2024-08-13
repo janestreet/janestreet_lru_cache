@@ -7,10 +7,10 @@ let foreach n f = List.init n ~f:(( + ) 1) |> List.iter ~f
 (* The signature reminds us to update tests after adding a function. *)
 module _ : S with type key := int = struct
   module M = Make (struct
-    type t = int [@@deriving compare, hash, sexp_of]
+      type t = int [@@deriving compare, hash, sexp_of]
 
-    let invariant = ignore
-  end)
+      let invariant = ignore
+    end)
 
   type 'a t = 'a M.t [@@deriving sexp_of]
 
@@ -70,12 +70,14 @@ module _ : S with type key := int = struct
       print_s [%sexp (to_alist t : (int * unit) list)]
     in
     test [ 1; 2; 3 ];
-    [%expect {|
+    [%expect
+      {|
       ((2 ())
        (3 ()))
       |}];
     test [ 1; 2; 1 ];
-    [%expect {|
+    [%expect
+      {|
       ((2 ())
        (1 ()))
       |}]
@@ -91,7 +93,8 @@ module _ : S with type key := int = struct
       print_s [%message "" ~length:(length t : int) ~is_empty:(is_empty t : bool)]
     in
     show ();
-    [%expect {|
+    [%expect
+      {|
       ((length   0)
        (is_empty true))
       |}];
@@ -110,7 +113,8 @@ module _ : S with type key := int = struct
     let (`Dropped dropped) = clear t in
     print_s [%message (dropped : int)];
     show ();
-    [%expect {|
+    [%expect
+      {|
       (dropped 2)
       ((length   0)
        (is_empty true))
@@ -133,7 +137,8 @@ module _ : S with type key := int = struct
     [%expect {| ((find (1)) (mem true)) |}];
     print_s [%message "" ~remove:(remove t 1 : [ `Ok | `No_such_key ])];
     show 1;
-    [%expect {|
+    [%expect
+      {|
       (remove Ok)
       ((find ()) (mem false))
       |}];
@@ -203,7 +208,8 @@ module _ : S with type key := int = struct
     set t ~key:1 ~data:1;
     set t ~key:2 ~data:2;
     show ();
-    [%expect {|
+    [%expect
+      {|
       ((1 1)
        (2 2))
       |}];
@@ -215,14 +221,16 @@ module _ : S with type key := int = struct
     [%expect {| () |}];
     set t ~key:1 ~data:1;
     show ();
-    [%expect {|
+    [%expect
+      {|
       ((2 2)
        (1 1))
       |}];
     find_and_remove 2;
     find_and_remove 1;
     find_and_remove 1;
-    [%expect {|
+    [%expect
+      {|
       (2)
       (1)
       ()
@@ -301,7 +309,8 @@ module _ : S with type key := int = struct
        (keys (6 5 7)))
       |}];
     print_s [%sexp (remove t 7 : [ `Ok | `No_such_key ])];
-    [%expect {|
+    [%expect
+      {|
       (destructing ((7 7)))
       Ok
       |}];
@@ -314,7 +323,8 @@ module _ : S with type key := int = struct
        (keys (6 5)))
       |}];
     print_s [%sexp (find_and_remove t 6 : int option)];
-    [%expect {|
+    [%expect
+      {|
       (destructing ((6 5)))
       (5)
       |}]

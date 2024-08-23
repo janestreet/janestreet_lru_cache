@@ -45,7 +45,7 @@ module type S = sig
   val set_max_size : _ t -> max_size:int -> [ `Dropped of int ]
   val remove : _ t -> key -> [ `Ok | `No_such_key ]
   val set : 'a t -> key:key -> data:'a -> unit
-  val find_or_add : 'a t -> key -> default:(unit -> 'a) -> 'a
+  val find_or_add : 'a t -> key -> default:local_ (unit -> 'a) -> 'a
   val find_and_remove : 'a t -> key -> 'a option
 end
 

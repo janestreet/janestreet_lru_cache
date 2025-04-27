@@ -60,12 +60,12 @@ module Make (H : H) = struct
   let max_size_lower_bound = 0
 
   let invariant invariant_a t =
-    Invariant.invariant [%here] (stats t) [%sexp_of: Sexp.t] (fun () ->
+    Invariant.invariant (stats t) [%sexp_of: Sexp.t] (fun () ->
       assert (Hq.length t.items <= t.max_size);
       assert (t.max_size >= max_size_lower_bound);
       assert (t.num_queries >= t.num_hits);
       Hq.iteri t.items ~f:(fun ~key ~data ->
-        Invariant.invariant [%here] key [%sexp_of: H.t] (fun () ->
+        Invariant.invariant key [%sexp_of: H.t] (fun () ->
           H.invariant key;
           invariant_a data)))
   ;;

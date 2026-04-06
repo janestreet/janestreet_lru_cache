@@ -6,6 +6,7 @@ bug-reports: "https://github.com/janestreet/janestreet_lru_cache/issues"
 dev-repo: "git+https://github.com/janestreet/janestreet_lru_cache.git"
 doc: "https://ocaml.janestreet.com/ocaml-core/latest/doc/janestreet_lru_cache/index.html"
 license: "MIT"
+x-maintenance-intent: ["(latest)"]
 build: [
   ["dune" "build" "-p" name "-j" jobs]
 ]

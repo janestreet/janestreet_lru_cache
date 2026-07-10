@@ -21,6 +21,12 @@ module type S = sig
   (** Ordered from least- to most-recently used elements. *)
   val to_alist : 'a t -> (key * 'a) list
 
+  (** Folds from least- to most-recently used elements. *)
+  val foldi : 'a t -> init:'acc -> f:('acc -> key:key -> data:'a -> 'acc) -> 'acc
+
+  (** Returns the least-recently used element without changing recency. *)
+  val least_recently_used : 'a t -> (key * 'a) option
+
   val length : _ t -> int
   val is_empty : _ t -> bool
   val stats : ?sexp_of_key:(key -> Sexp.t) -> _ t -> Sexp.t
@@ -53,5 +59,5 @@ module type Lru_cache = sig
   module type S = S
   module type H = H
 
-  module Make (H : H) : S with type key = H.t
+  module%template.portable Make (H : H) : S with type key = H.t
 end

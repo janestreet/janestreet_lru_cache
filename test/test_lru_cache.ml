@@ -62,6 +62,8 @@ module _ : S with type key := int = struct
   ;;
 
   let to_alist = M.to_alist
+  let foldi = M.foldi
+  let least_recently_used = M.least_recently_used
 
   let%expect_test "[to_alist]" =
     let test keys =
@@ -81,6 +83,39 @@ module _ : S with type key := int = struct
       ((2 ())
        (1 ()))
       |}]
+  ;;
+
+  let%expect_test "[foldi]" =
+    let t = create ~max_size:3 () in
+    List.iter [ 1; 2; 3; 2 ] ~f:(fun key -> set t ~key ~data:(key * 10));
+    let keys_and_data =
+      foldi t ~init:[] ~f:(fun keys ~key ~data -> (key, data) :: keys)
+    in
+    print_s [%message (keys_and_data : (int * int) list)];
+    [%expect
+      {|
+      (keys_and_data (
+        (2 20)
+        (3 30)
+        (1 10)))
+      |}]
+  ;;
+
+  let%expect_test "[least_recently_used]" =
+    let t = create ~max_size:2 () in
+    let show () = print_s [%sexp (least_recently_used t : (int * int) option)] in
+    show ();
+    [%expect {| () |}];
+    set t ~key:1 ~data:10;
+    set t ~key:2 ~data:20;
+    show ();
+    [%expect {| ((1 10)) |}];
+    ignore (M.find t 1 : int option);
+    show ();
+    [%expect {| ((2 20)) |}];
+    set t ~key:3 ~data:30;
+    show ();
+    [%expect {| ((1 10)) |}]
   ;;
 
   let clear = M.clear

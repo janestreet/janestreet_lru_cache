@@ -1,9 +1,9 @@
 open! Core
 include Lru_cache_intf
 
-module Make (H : H) = struct
+module%template.portable [@modality p] Make (H : H) = struct
   module Hq = struct
-    include Hash_queue.Make (H)
+    include Hash_queue.Make [@modality p] (H)
 
     let to_alist t =
       foldi t ~init:[] ~f:(fun acc ~key ~data -> (key, data) :: acc) |> List.rev
@@ -87,6 +87,8 @@ module Make (H : H) = struct
   ;;
 
   let to_alist t = Hq.to_alist t.items
+  let foldi t ~init ~f = Hq.foldi t.items ~init ~f
+  let least_recently_used t = Hq.first_with_key t.items
   let length t = Hq.length t.items
   let is_empty t = Hq.is_empty t.items
   let max_size t = t.max_size

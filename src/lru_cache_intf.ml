@@ -59,5 +59,5 @@ module type Lru_cache = sig
   module type S = S
   module type H = H
 
-  module%template.portable Make (H : H) : S with type key = H.t
+  module Make (H : H) : S with type key = H.t
 end

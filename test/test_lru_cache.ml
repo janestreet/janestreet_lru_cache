@@ -7,7 +7,7 @@ let foreach n f = List.init n ~f:(( + ) 1) |> List.iter ~f
 (* The signature reminds us to update tests after adding a function. *)
 module _ : S with type key := int = struct
   module M = Make (struct
-      type t = int [@@deriving compare, hash, sexp_of]
+      type t = int [@@deriving compare ~localize, hash, sexp_of]
 
       let invariant = ignore
     end)

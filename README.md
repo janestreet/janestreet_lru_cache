@@ -1,5 +1,4 @@
-Lru_cache
-=========
+# Lru_cache
 
 `Lru_cache` provides caching with least-recently-used eviction policy.
 
